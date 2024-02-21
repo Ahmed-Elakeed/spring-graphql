@@ -1,6 +1,8 @@
 package com.study.springgraphql.model;
 
-public class Author {
+import java.io.Serializable;
+
+public class Author implements Serializable {
     private Integer id;
     private String firstName;
     private String lastName;

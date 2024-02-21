@@ -1,6 +1,8 @@
 package com.study.springgraphql.model;
 
-public class Book {
+import java.io.Serializable;
+
+public class Book implements Serializable {
     private Integer id;
     private String name;
     private Integer pageCount;

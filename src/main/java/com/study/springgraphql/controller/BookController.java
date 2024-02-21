@@ -2,11 +2,10 @@ package com.study.springgraphql.controller;
 
 import com.study.springgraphql.model.Author;
 import com.study.springgraphql.model.Book;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +23,16 @@ public class BookController {
         books.add(new Book(4,"book4",400,new Author(1,"Abdo","Ashraf")));
     }
 
-    @GetMapping
     @QueryMapping
-    public List<Book> getAllBooks(){
+    @Cacheable(value = "books")
+    public List<Book> getAllBooks() throws InterruptedException {
+        Thread.sleep(2000);
+        System.out.println("Not cached");
         return books;
     }
 
-    @GetMapping(path = "/{id}")
     @QueryMapping
-    public Book getBookById(@PathVariable(value = "id") @Argument Integer id){
+    public Book getBookById(@Argument Integer id){
         return books.stream().filter(book -> book.getId().equals(id)).findFirst().orElse(null);
     }
 }
