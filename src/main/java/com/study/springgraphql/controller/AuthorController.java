@@ -18,19 +18,25 @@ public class AuthorController {
     private static List<Author> authors = new ArrayList<>();
 
 
-    @MutationMapping
-    @CacheEvict(value = "authors",key = "#author.id",allEntries = true)
-    public Author createAuthor(@Argument Author author){
-        authors.add(author);
-        return author;
-    }
-
     @QueryMapping
     @Cacheable(value = "authors")
     public List<Author> getAllAuthors() throws InterruptedException {
         Thread.sleep(2000);
         System.out.println("Authors not cached");
         return authors;
+    }
+
+    @QueryMapping
+    @Cacheable(value = "author",key = "#id")
+    public Author getAuthorById(@Argument Integer id){
+        return authors.stream().filter(author -> author.getId().equals(id)).findFirst().orElse(null);
+    }
+
+    @MutationMapping
+    @CacheEvict(value = "authors",key = "#author.id",allEntries = true)
+    public Author createAuthor(@Argument Author author){
+        authors.add(author);
+        return author;
     }
 
     @MutationMapping
@@ -40,11 +46,5 @@ public class AuthorController {
                 .collect(Collectors.toList());
         authors.add(author);
         return author;
-    }
-
-    @QueryMapping
-    @Cacheable(value = "author",key = "#id")
-    public Author getAuthorById(@Argument Integer id){
-        return authors.stream().filter(author -> author.getId().equals(id)).findFirst().orElse(null);
     }
 }
